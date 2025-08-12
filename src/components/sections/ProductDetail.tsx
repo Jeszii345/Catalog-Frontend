@@ -102,8 +102,8 @@ const ProductDetail = ({
   if (!product)
     return (
       <div className="p-6 text-center text-red-500 font-semibold">
-        Product not found
-      </div>
+ไม่พบสินค้า      
+</div>
     );
 
   const handleChange = (field: string, value: string | File) => {

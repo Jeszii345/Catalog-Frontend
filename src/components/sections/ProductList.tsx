@@ -161,7 +161,7 @@ const ProductList = () => {
             onClick={() => setShowSelectionModal(true)}
             className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-semibold"
           >
-            View Selection ({selectedProducts.length})
+            รายการที่เลือก ({selectedProducts.length})
           </button>
         </div>
       )}

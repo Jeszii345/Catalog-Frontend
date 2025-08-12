@@ -22,7 +22,7 @@ const ProductSelectionModal = ({
       >
         ✕
       </button>
-      <h2 className="text-2xl font-bold mb-4">Selected Products</h2>
+      <h2 className="text-2xl font-bold mb-4">สินค้าที่เลือก</h2>
       <div className="space-y-4 max-h-96 overflow-y-auto">
         {selectedProducts.map((p) => (
           <div key={p.id} className="flex items-center gap-4 border-b pb-2">
@@ -35,7 +35,7 @@ const ProductSelectionModal = ({
               onClick={() => onRemove(p.id)}
               className="text-red-500 hover:text-red-700 font-semibold"
             >
-              Remove
+              ลบรายการ
             </button>
           </div>
         ))}
@@ -44,7 +44,7 @@ const ProductSelectionModal = ({
         className="mt-6 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700"
         onClick={onPrintPDF}
       >
-        Print PDF ({selectedProducts.length})
+        ปริ้น PDF ({selectedProducts.length})
       </button>
     </div>
   </div>

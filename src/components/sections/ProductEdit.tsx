@@ -25,7 +25,7 @@ const ProductEdit = ({ id, onClose }: ProductEditProps) => {
   if (!formData) {
     return (
       <div className="p-6 text-center text-red-500 font-semibold">
-        Product not found
+        ไม่พบสินค้า
       </div>
     );
   }
