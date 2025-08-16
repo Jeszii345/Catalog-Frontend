@@ -24,9 +24,9 @@ const Header = () => {
             className="text-gradient flex items-center space-x-2 text-xl font-bold"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-primary-500 to-accent-500">
-              <span className="text-sm font-bold text-white">R</span>
+              <span className="text-sm font-bold text-white">C</span>
             </div>
-            <span>React Template</span>
+            <span>Catalog Product</span>
           </Link>
 
           {/* Desktop Navigation */}
