@@ -1,53 +1,129 @@
-import ProductCard from '../ProductCard';
-
-const sampleProducts = [
-  {
-    id: 1,
-    title: 'Product 1',
-    description: 'Lorem ipsum dolor sit amet.',
-    image: 'https://www.bobbyproductphotography.com/wp-content/uploads/2019/08/%E0%B8%96%E0%B9%88%E0%B8%B2%E0%B8%A2%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%AA%E0%B8%B4%E0%B8%99%E0%B8%84%E0%B9%89%E0%B8%B2-p3-1.jpg',
-  },
-  {
-    id: 2,
-    title: 'Product 2',
-    description: 'Sed do eiusmod tempor incididunt.',
-    image: 'https://www.taklong-dslr.com/images/course/img/pack-1.jpg',
-  },
-  {
-    id: 3,
-    title: 'Product 3',
-    description: 'Ut enim ad minim veniam.',
-    image: 'data:image/jpeg;base64,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',
-  },
-  {
-    id: 4,
-    title: 'Product 4',
-    description: 'Quis nostrud exercitation ullamco.',
-    image: 'https://via.placeholder.com/300x160',
-  },
-  {
-    id: 5,
-    title: 'Product 5',
-    description: 'Duis aute irure dolor in reprehenderit.',
-    image: 'https://via.placeholder.com/300x160',
-  },
-  {
-    id: 6,
-    title: 'Product 6',
-    description: 'Excepteur sint occaecat cupidatat non proident.',
-    image: 'https://via.placeholder.com/300x160',
-  },
-];
+import { useState } from "react";
+import ProductCard from "../ProductCard";
+import ProductDetail from "./ProductDetail";
+import { sampleProducts, Product } from "../../Data/products";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const ProductList = () => {
+  const [viewMode, setViewMode] = useState<"webpage" | "modal">("webpage");
+  const [modalProductId, setModalProductId] = useState<number | null>(null);
+  const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
+  const [showSelectionModal, setShowSelectionModal] = useState(false);
+
+  const handleAddToSelection = (product: Product) => {
+    setSelectedProducts((prev) => {
+      if (prev.find((p) => p.id === product.id)) return prev;
+      return [...prev, product];
+    });
+  };
+
+  const handlePrintPDF = () => {
+    if (selectedProducts.length === 0) return;
+
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Selected Products", 14, 20);
+
+    const tableData = selectedProducts.map((p) => [p.id, p.title, p.details]);
+    autoTable(doc, {
+      startY: 30,
+      head: [["ID", "Title", "Details"]],
+      body: tableData,
+    });
+
+    doc.save("selected-products.pdf");
+  };
+
   return (
-    <div className="flex flex-wrap justify-center gap-x-8 gap-y-10 p-6 max-w-7xl mx-auto">
-      {sampleProducts.map((product) => (
-        <div key={product.id} className="w-full sm:w-1/2 md:w-1/3">
-          <ProductCard product={product} />
+    <div className="max-w-7xl mx-auto p-6">
+      {/* Toggle ปุ่มเลือกโหมด */}
+      <div className="flex justify-center mb-6 gap-4">
+        <button
+          className={`px-4 py-2 rounded ${viewMode === "webpage" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+          onClick={() => setViewMode("webpage")}
+        >
+          Webpage
+        </button>
+        <button
+          className={`px-4 py-2 rounded ${viewMode === "modal" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
+          onClick={() => setViewMode("modal")}
+        >
+          Modal
+        </button>
+      </div>
+
+      {/* ปุ่มเปิดหน้าพักสินค้าที่เลือก */}
+      {selectedProducts.length > 0 && (
+        <div className="mb-6 text-center">
+          <button
+            onClick={() => setShowSelectionModal(true)}
+            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-semibold"
+          >
+            View Selection ({selectedProducts.length})
+          </button>
         </div>
-      ))}
+      )}
+
+      {/* แสดงการ์ดสินค้า */}
+      <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
+        {sampleProducts.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            mode={viewMode}
+            onOpenModal={setModalProductId} // เปิด modal ถ้าเลือกโหมด modal
+            onAddToSelection={handleAddToSelection} // เพิ่มสินค้าลงหน้าพัก
+          />
+        ))}
+      </div>
+
+      {/* แสดง modal ของ product detail ถ้าเลือก modal */}
+      {modalProductId && viewMode === "modal" && (
+        <ProductDetail
+          mode="modal"
+          id={modalProductId.toString()}
+          onClose={() => setModalProductId(null)}
+        />
+      )}
+
+      {/* Modal แสดงสินค้าที่เลือก */}
+      {showSelectionModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white p-6 rounded-xl max-w-2xl w-full shadow-lg relative">
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowSelectionModal(false)}
+            >
+              ✕
+            </button>
+            <h2 className="text-2xl font-bold mb-4">Selected Products</h2>
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {selectedProducts.map((p) => (
+                <div key={p.id} className="flex items-center gap-4">
+                  <img
+                    src={p.image}
+                    alt={p.title}
+                    className="w-16 h-16 object-contain rounded"
+                  />
+                  <div>
+                    <h3 className="font-semibold">{p.title}</h3>
+                    <p className="text-gray-600 text-sm">{p.details}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button
+              className="mt-6 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700"
+              onClick={handlePrintPDF}
+            >
+              Print PDF ({selectedProducts.length})
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
 export default ProductList;

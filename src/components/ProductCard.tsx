@@ -1,43 +1,80 @@
-type Product = {
-  id: number;
-  title: string;
-  description: string;
-  image?: string;
-};
+import { Link } from "react-router-dom";
+import { sampleProducts } from "../Data/products";
+
+type Product = typeof sampleProducts[0];
 
 type ProductCardProps = {
   product: Product;
+  mode?: "webpage" | "modal";
+  onOpenModal?: (id: number) => void;
+  shortLength?: number;
+  imgHeight?: number;
+  onAddToSelection?: (product: Product) => void;
 };
 
-const ProductCard = ({ product }: ProductCardProps) => {
-  return (
-<div className="card card-hover animate-slide-in relative flex flex-col rounded-xl bg-white text-gray-700 shadow-md transition-transform duration-300 w-full">      <div className="relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg">
-        {product.image && (
-          <img
-            src={product.image}
-            alt={product.title}
-            className="h-full w-full object-cover"
-          />
-        )}
+const ProductCard = ({
+  product,
+  mode = "webpage",
+  onOpenModal,
+  shortLength = 50,
+  imgHeight = 200,
+  onAddToSelection,
+}: ProductCardProps) => {
+  const handleClick = () => {
+    if (mode === "modal" && onOpenModal) {
+      onOpenModal(product.id);
+    }
+  };
+
+  const shortDesc =
+    product.details.length > shortLength
+      ? product.details.slice(0, shortLength) + "..."
+      : product.details;
+
+  const imageStyle = {
+    height: `${imgHeight}px`,
+    width: "100%",
+    objectFit: "contain" as const,
+  };
+
+  const CardContent = (
+    <>
+      <div
+        onClick={mode === "modal" ? handleClick : undefined}
+        className="p-4"
+      >
+        <img
+          src={product.image}
+          alt={product.title}
+          style={imageStyle}
+          className="rounded-t-xl"
+        />
+        <h2 className="mt-4 font-bold">{product.title}</h2>
+        <p className="mt-2 text-gray-700">{shortDesc}</p>
       </div>
-      <div className="p-6">
-        <h5 className="mb-2 text-xl font-semibold text-blue-gray-900">
-          {product.title}
-        </h5>
-        <p className="text-base font-light leading-relaxed">
-          {product.description}
-        </p>
-      </div>
-      <div className="p-6 pt-0">
-        <button
-          type="button"
-          className="rounded-lg bg-blue-500 py-3 px-6 text-xs font-bold uppercase text-white shadow-md transition-all hover:shadow-lg"
-        >
-          Read More
-        </button>
-      </div>
-    </div>
+
+      {/* ปุ่มด้านล่าง card */}
+      {onAddToSelection && (
+        <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            onClick={() => onAddToSelection(product)}
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+          >
+            Add to Selection
+          </button>
+        </div>
+      )}
+    </>
   );
+
+  const cardClass =
+    "cursor-pointer block rounded-xl border border-gray-200 bg-white shadow-md hover:border-blue-500 group hover:scale-105 transition-transform overflow-hidden";
+
+  if (mode === "webpage") {
+    return <Link to={`/products/${product.id}`} className={cardClass}>{CardContent}</Link>;
+  }
+
+  return <div className={cardClass}>{CardContent}</div>;
 };
 
 export default ProductCard;

@@ -5,7 +5,9 @@ import NotFound from '@pages/NotFound'
 import Login from './pages/Login/Login'
 import Home from './pages/Home'
 import Contact from './pages/Contact'
-import About from './pages/About'
+import ProductList from './components/sections/ProductList'
+import ProductDetail from './components/sections/ProductDetail'
+import ManagerDatatable from './components/Manager Datatable/ManagerDatatable'
 
 function App() {
   return (
@@ -20,9 +22,11 @@ function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
+              <Route path="/manager-datatable" element={<ManagerDatatable />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="*" element={<NotFound />} />
+              <Route path="/" element={<ProductList />} />
+              <Route path="/products/:id" element={<ProductDetail mode="webpage" />} />
             </Routes>
           </Layout>
         }
