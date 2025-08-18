@@ -37,44 +37,47 @@ const ProductCard = ({
     objectFit: "contain" as const,
   };
 
-  const CardContent = (
-    <>
-      <div
-        onClick={mode === "modal" ? handleClick : undefined}
-        className="p-4"
-      >
-        <img
-          src={product.image}
-          alt={product.title}
-          style={imageStyle}
-          className="rounded-t-xl"
-        />
-        <h2 className="mt-4 font-bold">{product.title}</h2>
-        <p className="mt-2 text-gray-700">{shortDesc}</p>
-      </div>
+  const cardClass =
+    "block rounded-xl border border-gray-200 bg-white shadow-md hover:border-blue-500 group hover:scale-105 transition-transform overflow-hidden cursor-pointer";
 
-      {/* ปุ่มด้านล่าง card */}
+  // ส่วนเนื้อหาหลัก (กดเพื่อเข้าไปดูรายละเอียด)
+  const Content = (
+    <div className="p-4">
+      <img
+        src={product.image}
+        alt={product.title}
+        style={imageStyle}
+        className="rounded-t-xl"
+      />
+      <h2 className="mt-4 font-bold">{product.title}</h2>
+      <p className="mt-2 text-gray-700">{shortDesc}</p>
+    </div>
+  );
+
+  return (
+    <div className={cardClass}>
+      {mode === "webpage" ? (
+        <Link to={`/products/${product.id}`}>{Content}</Link>
+      ) : (
+        <div onClick={handleClick}>{Content}</div>
+      )}
+
+      {/* ปุ่ม Add to Selection ทำงานได้ทั้ง modal และ webpage */}
       {onAddToSelection && (
-        <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="px-4 pb-4 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
-            onClick={() => onAddToSelection(product)}
+            onClick={(e) => {
+              e.stopPropagation(); // ป้องกันการ trigger link/modal
+              onAddToSelection(product);
+            }}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
           >
             Add to Selection
           </button>
         </div>
       )}
-    </>
+    </div>
   );
-
-  const cardClass =
-    "cursor-pointer block rounded-xl border border-gray-200 bg-white shadow-md hover:border-blue-500 group hover:scale-105 transition-transform overflow-hidden";
-
-  if (mode === "webpage") {
-    return <Link to={`/products/${product.id}`} className={cardClass}>{CardContent}</Link>;
-  }
-
-  return <div className={cardClass}>{CardContent}</div>;
 };
 
 export default ProductCard;

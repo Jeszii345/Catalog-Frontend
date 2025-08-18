@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { FiMenu, FiX, FiHome, FiFile, FiMail } from 'react-icons/fi'
+import { FiMenu, FiX, FiHome, FiMail } from 'react-icons/fi'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -8,7 +8,6 @@ const Header = () => {
 
   const navItems = [
     { path: '/', label: 'หน้าแรก', icon: FiHome },
-    { path: '/manager-datatable', label: 'ส่งออกข้อมูล', icon: FiFile },
     { path: '/contact', label: 'ติดต่อ', icon: FiMail },
   ]
 
