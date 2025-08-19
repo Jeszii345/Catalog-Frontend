@@ -1,5 +1,23 @@
+import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { sampleProducts } from "../../Data/products";
+import { sampleProducts, Product } from "../../Data/products";
+
+// เพิ่ม Toast component แบบง่าย ๆ
+const Toast = ({ message, onClose }: { message: string; onClose: () => void }) => {
+  // Toast จะหายไปเองใน 5 วินาที
+  useEffect(() => {
+    const timer = setTimeout(onClose, 5000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+  return (
+    <div className="fixed top-6 right-6 z-50">
+      <div className="bg-red-600 text-white px-6 py-3 rounded shadow-lg flex items-center gap-3">
+        <span>{message}</span>
+        <button onClick={onClose} className="ml-2 text-white font-bold">✕</button>
+      </div>
+    </div>
+  );
+};
 
 type ProductDetailProps = {
   mode?: "webpage" | "modal";
@@ -7,6 +25,29 @@ type ProductDetailProps = {
   onClose?: () => void;
   imgHeight?: number;
 };
+
+const requiredFields = [
+  "productCode",
+  "title",
+  "titleEn",
+  "packTh",
+  "packEn",
+  "categoryImage",
+  "detailsTh",
+  "detailsEn",
+  "categoryMain",
+  "categoryNameTh",
+  "categoryNameEn",
+  "productImage",
+  "detailImage",
+];
+
+const categoryOptions = [
+  "อาหารเด็ก",
+  "เครื่องสำอาง",
+  "ผลิตภัณฑ์ทำความสะอาด",
+  "อื่น ๆ",
+];
 
 const ProductDetail = ({
   mode = "webpage",
@@ -17,118 +58,210 @@ const ProductDetail = ({
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const productId = id || params.id;
-  const product = sampleProducts.find((p) => p.id === Number(productId));
+  const initialProduct = sampleProducts.find((p) => p.id === Number(productId));
+
+  const [product, setProduct] = useState<Product | undefined>(initialProduct);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState<any>(initialProduct);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   if (!product)
-    return <div className="p-6 text-center text-red-500 font-semibold">Product not found</div>;
+    return (
+      <div className="p-6 text-center text-red-500 font-semibold">
+        Product not found
+      </div>
+    );
 
-  const imageStyle = {
-    width: "100%",
-    height: `${imgHeight}px`,
-    objectFit: "contain" as const,
+  const handleChange = (field: string, value: string | File) => {
+    if (value instanceof File) {
+      const url = URL.createObjectURL(value);
+      setFormData({ ...formData, [field]: url });
+    } else {
+      setFormData({ ...formData, [field]: value });
+    }
   };
 
-  const detailItem = (label: string, value: string | number | undefined) => (
-    <div className="flex justify-between p-2 border-b last:border-b-0 rounded-md bg-gray-50 hover:bg-gray-100 transition">
-      <span className="font-semibold text-gray-700">{label}</span>
-      <span className="text-gray-800">{value || "-"}</span>
+  const handleSave = () => {
+    for (const field of requiredFields) {
+      if (!formData[field] || formData[field].toString().trim() === "") {
+        setToastMsg("ห้ามให้ช่องที่ต้องระบุว่าง");
+        return;
+      }
+    }
+    setProduct(formData); // ในระบบจริงต้องเรียก API
+    setIsEditing(false);
+  };
+
+  const handleDelete = () => {
+    if (confirm("Are you sure you want to delete this product?")) {
+      alert("Deleted!");
+      navigate("/");
+    }
+  };
+
+  const detailItem = (
+    title: string,
+    field: string | number | undefined,
+    required = false,
+    isImage = false
+  ) => (
+    <div className="flex flex-col p-3 border-b last:border-b-0 rounded-md bg-gray-50 hover:bg-gray-100 transition">
+      <span className="text-lg font-bold text-gray-800">
+        {title} {required && <span className="text-red-500">*</span>}
+      </span>
+      {isEditing ? (
+        field === "categoryMain" ? (
+          <select
+            value={formData[field as string] || ""}
+            onChange={(e) => handleChange(field as string, e.target.value)}
+            className="mt-1 border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <option value="">-- Select Category --</option>
+            {categoryOptions.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+        ) : isImage ? (
+          <>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => e.target.files && handleChange(field as string, e.target.files[0])}
+              className="mt-1"
+            />
+            {formData[field as string] && (
+              <img
+                src={formData[field as string]}
+                alt={title}
+                className="mt-2 w-full h-48 object-contain rounded-lg shadow border"
+              />
+            )}
+          </>
+        ) : (
+          <input
+            type="text"
+            value={formData[field as string] || ""}
+            onChange={(e) => handleChange(field as string, e.target.value)}
+            className="mt-1 border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        )
+      ) : isImage ? (
+        formData[field as string] && (
+          <img
+            src={formData[field as string]}
+            alt={title}
+            className="mt-2 w-full h-48 object-contain rounded-lg shadow border"
+          />
+        )
+      ) : (
+        <span className="text-gray-700 mt-1">{formData[field as string] || "-"}</span>
+      )}
     </div>
   );
 
   const Content = (
-    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="space-y-2">
-        {detailItem("รหัสสินค้า", product.productCode)}
-        {detailItem("ประเภทสินค้าหลัก", product.categoryMain)}
-        {detailItem("ชื่อสินค้า (ไทย)", product.title)}
-        {detailItem("ชื่อสินค้า (อังกฤษ)", product.titleEn)}
-        {detailItem("จำนวนบรรจุ (ไทย)", product.packTh)}
-        {detailItem("จำนวนบรรจุ (อังกฤษ)", product.packEn)}
-        {detailItem("รายละเอียด (ไทย)", product.detailsTh)}
-        {detailItem("รายละเอียด (อังกฤษ)", product.detailsEn)}
-        {detailItem("ประเภทสินค้าย่อย", product.subCategory)}
-        {detailItem("ชื่อประเภทสินค้า (ไทย)", product.categoryNameTh)}
-        {detailItem("ชื่อประเภทสินค้า (อังกฤษ)", product.categoryNameEn)}
-        {detailItem("ราคาต่อชิ้น", product.unitPrice)}
+    <div className="mt-4 space-y-6">
+      {/* ข้อมูลสินค้า */}
+      <div className="bg-white p-5 rounded-xl shadow-md space-y-3">
+        <h2 className="text-xl font-bold text-gray-800">ข้อมูลสินค้า</h2>
+        {detailItem("รหัสสินค้า", "productCode", true)}
+        {detailItem("ประเภทสินค้าหลัก", "categoryMain", true)}
+        {detailItem("ชื่อสินค้า ภาษาไทย", "title", true)}
+        {detailItem("ชื่อสินค้า ภาษาอังกฤษ", "titleEn", true)}
+        {detailItem("จำนวนบรรจุ ภาษาไทย", "packTh", true)}
+        {detailItem("จำนวนบรรจุ ภาษาอังกฤษ", "packEn", true)}
       </div>
 
-      <div className="space-y-4">
-        <div>
-          <span className="font-semibold text-gray-700">ภาพประเภทสินค้า</span>
-          {product.categoryImage && (
-            <img
-              src={product.categoryImage}
-              alt="Category"
-              className="mt-2 w-full h-48 object-contain rounded-lg shadow border"
-            />
-          )}
-        </div>
+      {/* รูปภาพ */}
+      <div className="bg-white p-5 rounded-xl shadow-md space-y-3">
+        <h2 className="text-xl font-bold text-gray-800">รูปภาพ</h2>
+        {detailItem("ภาพประเภทสินค้า", "categoryImage", true, true)}
+        {detailItem("ภาพสินค้า", "productImage", true, true)}
+        {detailItem("ภาพรายละเอียด", "detailImage", true, true)}
+      </div>
 
-        <div>
-          <span className="font-semibold text-gray-700">ภาพสินค้า</span>
-          {product.productImage && (
-            <img
-              src={product.productImage}
-              alt="Product"
-              className="mt-2 w-full h-48 object-contain rounded-lg shadow border"
-            />
-          )}
-        </div>
+      {/* รายละเอียดเพิ่มเติม */}
+      <div className="bg-white p-5 rounded-xl shadow-md space-y-3">
+        <h2 className="text-xl font-bold text-gray-800">รายละเอียดเพิ่มเติม</h2>
+        {detailItem("รายละเอียด ภาษาไทย", "detailsTh", true)}
+        {detailItem("รายละเอียด ภาษาอังกฤษ", "detailsEn", true)}
+        {detailItem("ประเภทสินค้าย่อย", "subCategory")}
+        {detailItem("ชื่อประเภทสินค้า ภาษาไทย", "categoryNameTh", true)}
+        {detailItem("ชื่อประเภทสินค้า ภาษาอังกฤษ", "categoryNameEn", true)}
+        {detailItem("สัดส่วนราคาต่อชิ้น", "unitPrice")}
+      </div>
 
-        <div>
-          <span className="font-semibold text-gray-700">ภาพรายละเอียด</span>
-          {product.detailImage && (
-            <img
-              src={product.detailImage}
-              alt="Detail"
-              className="mt-2 w-full h-48 object-contain rounded-lg shadow border"
-            />
-          )}
-        </div>
+      {/* ปุ่ม */}
+      <div className="flex gap-3 mt-4 justify-end">
+        {isEditing ? (
+          <>
+            <button
+              onClick={handleSave}
+              className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition"
+            >
+              บันทึกข้อมูล
+            </button>
+            <button
+              onClick={() => {
+                setFormData(product); // คืนค่าเดิมทั้งหมด
+                setIsEditing(false);
+              }}
+              className="bg-gray-400 text-white px-5 py-2 rounded-lg hover:bg-gray-500 transition"
+            >
+              ยกเลิก
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={() => setIsEditing(true)}
+              className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+            >
+              แก้ไขข้อมูล
+            </button>
+            <button
+              onClick={handleDelete}
+              className="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition"
+            >
+              ลบข้อมูล
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
 
-  if (mode === "modal") {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-        <div className="relative max-w-4xl w-full bg-white p-6 rounded-xl shadow-xl overflow-auto max-h-full">
-          <button
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl"
-            onClick={onClose || (() => navigate(-1))}
-          >
-            ✕
-          </button>
-          <h1 className="text-3xl font-bold text-gray-800">{product.title}</h1>
-          <img
-            src={product.image}
-            alt={product.title}
-            style={imageStyle}
-            className="rounded-xl shadow-md mt-4"
-          />
-          {Content}
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <h1 className="text-4xl font-bold text-gray-800">{product.title}</h1>
-      <img
-        src={product.image}
-        alt={product.title}
-        style={imageStyle}
-        className="rounded-xl shadow-md mt-4"
-      />
-      {Content}
-      <Link
-        to="/"
-        className="mt-6 inline-block rounded-lg bg-blue-600 px-6 py-3 text-white font-semibold hover:bg-blue-700 transition"
-      >
-        Back to Products
-      </Link>
-    </div>
+    <>
+      {toastMsg && <Toast message={toastMsg} onClose={() => setToastMsg(null)} />}
+      {mode === "modal" ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="relative max-w-2xl w-full bg-white p-6 rounded-xl shadow-xl overflow-auto max-h-full">
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl"
+              onClick={onClose || (() => navigate(-1))}
+            >
+              ✕
+            </button>
+            <h1 className="text-2xl font-bold text-gray-800">{product.title}</h1>
+            {Content}
+          </div>
+        </div>
+      ) : (
+        <div className="max-w-3xl mx-auto p-6">
+          <h1 className="text-3xl font-bold text-gray-800">{product.title}</h1>
+          {Content}
+          <Link
+            to="/"
+            className="mt-6 inline-block rounded-lg bg-blue-600 px-6 py-3 text-white font-semibold hover:bg-blue-700 transition"
+          >
+           กลับไปยังหน้าหลัก
+          </Link>
+        </div>
+      )}
+    </>
   );
 };
 

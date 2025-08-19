@@ -10,6 +10,22 @@ type Props = {
   renderImageUpload: (label: string, key: string) => React.ReactNode;
 };
 
+const requiredFields = [
+  "id",
+  "categoryMain",
+  "title",
+  "titleEn",
+  "packTh",
+  "packEn",
+  "categoryImage",
+  "detailsTh",
+  "detailsEn",
+  "categoryNameTh",
+  "categoryNameEn",
+  "productImage",
+  "detailImage",
+];
+
 const AddProductModal = ({
   show,
   newProduct,
@@ -20,9 +36,48 @@ const AddProductModal = ({
   renderImageUpload,
 }: Props) => {
   if (!show) return null;
+
+  const detailItem = (
+    title: string,
+    field: string,
+    required = false,
+    isImage = false
+  ) => (
+    <div className="flex flex-col p-3 border-b last:border-b-0 rounded-md bg-gray-50 hover:bg-gray-100 transition">
+      <span className="text-lg font-bold text-gray-800">
+        {title} {required && <span className="text-red-500">*</span>}
+      </span>
+      {isImage ? (
+        renderImageUpload(title, field)
+      ) : field === "categoryMain" ? (
+        <select
+          value={newProduct[field] || ""}
+          onChange={(e) => setNewProduct({ ...newProduct, [field]: e.target.value })}
+          className="mt-1 border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required={required}
+        >
+          <option value="">-- เลือกประเภทสินค้าหลัก --</option>
+          {categoryOptions.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          type="text"
+          value={newProduct[field] || ""}
+          onChange={(e) => setNewProduct({ ...newProduct, [field]: e.target.value })}
+          className="mt-1 border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required={required}
+        />
+      )}
+    </div>
+  );
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-y-auto p-4">
-      <div className="bg-white p-6 rounded-xl max-w-3xl w-full shadow-lg relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white p-6 rounded-xl max-w-2xl w-full shadow-lg relative overflow-y-auto max-h-[90vh]">
         <button
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
           onClick={onCancel}
@@ -30,108 +85,39 @@ const AddProductModal = ({
           ✕
         </button>
         <h2 className="text-2xl font-bold mb-6">เพิ่มสินค้าใหม่</h2>
-        <form onSubmit={onSubmit} className="grid grid-cols-2 gap-4">
-          <input
-            type="text"
-            placeholder="รหัสสินค้า (ต้องระบุ)"
-            value={newProduct.id}
-            onChange={(e) => setNewProduct({ ...newProduct, id: e.target.value })}
-            className="border p-2 rounded"
-            required
-          />
-          <select
-            value={newProduct.categoryMain}
-            onChange={(e) => setNewProduct({ ...newProduct, categoryMain: e.target.value })}
-            className="border p-2 rounded"
-            required
-          >
-            <option value="">-- เลือกประเภทสินค้าหลัก --</option>
-            {categoryOptions.map((opt) => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
-          <input
-            type="text"
-            placeholder="ชื่อสินค้า (TH) (ต้องระบุ)"
-            value={newProduct.title}
-            onChange={(e) => setNewProduct({ ...newProduct, title: e.target.value })}
-            className="border p-2 rounded"
-            required
-          />
-          <input
-            type="text"
-            placeholder="ชื่อสินค้า (EN) (ต้องระบุ)"
-            value={newProduct.titleEn}
-            onChange={(e) => setNewProduct({ ...newProduct, titleEn: e.target.value })}
-            className="border p-2 rounded"
-            required
-          />
-          <input
-            type="text"
-            placeholder="จำนวนบรรจุ (TH) (ต้องระบุ)"
-            value={newProduct.packTh}
-            onChange={(e) => setNewProduct({ ...newProduct, packTh: e.target.value })}
-            className="border p-2 rounded"
-            required
-          />
-          <input
-            type="text"
-            placeholder="จำนวนบรรจุ (EN) (ต้องระบุ)"
-            value={newProduct.packEn}
-            onChange={(e) => setNewProduct({ ...newProduct, packEn: e.target.value })}
-            className="border p-2 rounded"
-            required
-          />
-          {renderImageUpload("ภาพประเภทสินค้า", "categoryImage")}
-          {renderImageUpload("ภาพสินค้า", "productImage")}
-          {renderImageUpload("ภาพรายละเอียด", "detailImage")}
-          <input
-            type="text"
-            placeholder="รายละเอียด (TH) (ต้องระบุ)"
-            value={newProduct.detailsTh}
-            onChange={(e) => setNewProduct({ ...newProduct, detailsTh: e.target.value })}
-            className="border p-2 rounded col-span-2"
-            required
-          />
-          <input
-            type="text"
-            placeholder="รายละเอียด (EN) (ต้องระบุ)"
-            value={newProduct.detailsEn}
-            onChange={(e) => setNewProduct({ ...newProduct, detailsEn: e.target.value })}
-            className="border p-2 rounded col-span-2"
-            required
-          />
-          <input
-            type="text"
-            placeholder="ประเภทสินค้าย่อย"
-            value={newProduct.subCategory}
-            onChange={(e) => setNewProduct({ ...newProduct, subCategory: e.target.value })}
-            className="border p-2 rounded"
-          />
-          <input
-            type="text"
-            placeholder="ชื่อประเภทสินค้า (TH) (ต้องระบุ)"
-            value={newProduct.categoryNameTh}
-            onChange={(e) => setNewProduct({ ...newProduct, categoryNameTh: e.target.value })}
-            className="border p-2 rounded"
-            required
-          />
-          <input
-            type="text"
-            placeholder="ชื่อประเภทสินค้า (EN) (ต้องระบุ)"
-            value={newProduct.categoryNameEn}
-            onChange={(e) => setNewProduct({ ...newProduct, categoryNameEn: e.target.value })}
-            className="border p-2 rounded"
-            required
-          />
-          <input
-            type="text"
-            placeholder="สัดส่วนราคาต่อชิ้น"
-            value={newProduct.unitPrice}
-            onChange={(e) => setNewProduct({ ...newProduct, unitPrice: e.target.value })}
-            className="border p-2 rounded"
-          />
-          <div className="col-span-2 flex justify-end gap-3 pt-4">
+        <form onSubmit={onSubmit} className="space-y-6">
+          {/* ข้อมูลสินค้า */}
+          <div className="bg-white p-5 rounded-xl shadow-md space-y-3">
+            <h3 className="text-xl font-bold text-gray-800">ข้อมูลสินค้า</h3>
+            {detailItem("รหัสสินค้า", "id", true)}
+            {detailItem("ประเภทสินค้าหลัก", "categoryMain", true)}
+            {detailItem("ชื่อสินค้า ภาษาไทย", "title", true)}
+            {detailItem("ชื่อสินค้า ภาษาอังกฤษ", "titleEn", true)}
+            {detailItem("จำนวนบรรจุ ภาษาไทย", "packTh", true)}
+            {detailItem("จำนวนบรรจุ ภาษาอังกฤษ", "packEn", true)}
+          </div>
+
+          {/* รูปภาพ */}
+          <div className="bg-white p-5 rounded-xl shadow-md space-y-3">
+            <h3 className="text-xl font-bold text-gray-800">รูปภาพ</h3>
+            {detailItem("ภาพประเภทสินค้า", "categoryImage", true, true)}
+            {detailItem("ภาพสินค้า", "productImage", true, true)}
+            {detailItem("ภาพรายละเอียด", "detailImage", true, true)}
+          </div>
+
+          {/* รายละเอียดเพิ่มเติม */}
+          <div className="bg-white p-5 rounded-xl shadow-md space-y-3">
+            <h3 className="text-xl font-bold text-gray-800">รายละเอียดเพิ่มเติม</h3>
+            {detailItem("รายละเอียด ภาษาไทย", "detailsTh", true)}
+            {detailItem("รายละเอียด ภาษาอังกฤษ", "detailsEn", true)}
+            {detailItem("ประเภทสินค้าย่อย", "subCategory")}
+            {detailItem("ชื่อประเภทสินค้า ภาษาไทย", "categoryNameTh", true)}
+            {detailItem("ชื่อประเภทสินค้า ภาษาอังกฤษ", "categoryNameEn", true)}
+            {detailItem("สัดส่วนราคาต่อชิ้น", "unitPrice")}
+          </div>
+
+          {/* ปุ่ม */}
+          <div className="flex justify-end gap-3">
             <button
               type="button"
               onClick={onCancel}

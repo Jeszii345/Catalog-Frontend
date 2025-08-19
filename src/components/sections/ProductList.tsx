@@ -7,6 +7,7 @@ import ProductSelectionModal from "./ProductSelectionModal";
 import AddProductModal from "./AddProductModal";
 import ViewModeToggle from "./ViewModeToggle";
 import ProductGrid from "./ProductGrid";
+import ProductEdit from "./ProductEdit"; // หรือ ProductEditModal
 
 // --- ตัวเลือกประเภทสินค้าหลัก ---
 const categoryOptions = [
@@ -23,6 +24,7 @@ const ProductList = () => {
   const [showSelectionModal, setShowSelectionModal] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [products, setProducts] = useState<Product[]>(sampleProducts);
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const [newProduct, setNewProduct] = useState<any>({
     id: "",
@@ -168,12 +170,20 @@ const ProductList = () => {
         viewMode={viewMode}
         onOpenModal={setModalProductId}
         onAddToSelection={handleAddToSelection}
+        onEdit={setEditingId}
+        editingId={editingId}
       />
       {modalProductId && viewMode === "modal" && (
         <ProductDetail
           mode="modal"
           id={modalProductId.toString()}
           onClose={() => setModalProductId(null)}
+        />
+      )}
+      {editingId && (
+        <ProductEdit
+          id={editingId.toString()}
+          onClose={() => setEditingId(null)}
         />
       )}
       {showSelectionModal && (
