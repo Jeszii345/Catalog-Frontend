@@ -2,18 +2,51 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { sampleProducts, Product } from "../../Data/products";
 
-// เพิ่ม Toast component แบบง่าย ๆ
+// Toast component
 const Toast = ({ message, onClose }: { message: string; onClose: () => void }) => {
-  // Toast จะหายไปเองใน 5 วินาที
   useEffect(() => {
     const timer = setTimeout(onClose, 5000);
     return () => clearTimeout(timer);
   }, [onClose]);
   return (
-    <div className="fixed top-6 right-6 z-50">
+    <div className="fixed top-6 right-6 z-[60]">
       <div className="bg-red-600 text-white px-6 py-3 rounded shadow-lg flex items-center gap-3">
         <span>{message}</span>
         <button onClick={onClose} className="ml-2 text-white font-bold">✕</button>
+      </div>
+    </div>
+  );
+};
+
+// Confirm Modal component
+const ConfirmModal = ({
+  message,
+  onConfirm,
+  onCancel,
+}: {
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) => {
+  return (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60">
+      <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full relative">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">ยืนยันการลบ</h2>
+        <p className="text-gray-700 mb-6">{message}</p>
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={onCancel}
+            className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
+          >
+            ยกเลิก
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+          >
+            ลบข้อมูล
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -64,6 +97,7 @@ const ProductDetail = ({
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<any>(initialProduct);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   if (!product)
     return (
@@ -88,15 +122,17 @@ const ProductDetail = ({
         return;
       }
     }
-    setProduct(formData); // ในระบบจริงต้องเรียก API
+    setProduct(formData);
     setIsEditing(false);
   };
 
-  const handleDelete = () => {
-    if (confirm("Are you sure you want to delete this product?")) {
-      alert("Deleted!");
-      navigate("/");
-    }
+  const confirmDelete = () => {
+    setShowConfirm(true);
+  };
+
+  const handleDeleteConfirmed = () => {
+    setShowConfirm(false);
+    navigate("/");
   };
 
   const detailItem = (
@@ -205,7 +241,7 @@ const ProductDetail = ({
             </button>
             <button
               onClick={() => {
-                setFormData(product); // คืนค่าเดิมทั้งหมด
+                setFormData(product);
                 setIsEditing(false);
               }}
               className="bg-gray-400 text-white px-5 py-2 rounded-lg hover:bg-gray-500 transition"
@@ -222,7 +258,7 @@ const ProductDetail = ({
               แก้ไขข้อมูล
             </button>
             <button
-              onClick={handleDelete}
+              onClick={confirmDelete}
               className="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition"
             >
               ลบข้อมูล
@@ -236,6 +272,13 @@ const ProductDetail = ({
   return (
     <>
       {toastMsg && <Toast message={toastMsg} onClose={() => setToastMsg(null)} />}
+      {showConfirm && (
+        <ConfirmModal
+          message="คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?"
+          onConfirm={handleDeleteConfirmed}
+          onCancel={() => setShowConfirm(false)}
+        />
+      )}
       {mode === "modal" ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="relative max-w-2xl w-full bg-white p-6 rounded-xl shadow-xl overflow-auto max-h-full">
@@ -257,7 +300,7 @@ const ProductDetail = ({
             to="/"
             className="mt-6 inline-block rounded-lg bg-blue-600 px-6 py-3 text-white font-semibold hover:bg-blue-700 transition"
           >
-           กลับไปยังหน้าหลัก
+            กลับไปยังหน้าหลัก
           </Link>
         </div>
       )}
