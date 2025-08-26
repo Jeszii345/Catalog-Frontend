@@ -44,6 +44,23 @@ const ProductList = () => {
     unitPrice: "",
   });
 
+  const [searchText, setSearchText] = useState("");
+  const [mainCategory, setMainCategory] = useState("");
+  const [subCategory, setSubCategory] = useState("");
+
+  // ฟิลเตอร์สินค้า
+  const filteredProducts = products.filter((product) => {
+    const search = searchText.trim().toLowerCase();
+    const matchSearch =
+      (product.productCode?.toString().toLowerCase().includes(search) ?? false) ||
+      product.title.toLowerCase().includes(search);
+
+    const matchMain = mainCategory ? product.categoryMain === mainCategory : true;
+    const matchSub = subCategory ? product.subCategory === subCategory : true;
+
+    return matchSearch && matchMain && matchSub;
+  });
+
   // เพิ่มสินค้าลงใน Selection
   const handleAddToSelection = (product: Product) => {
     setSelectedProducts((prev) => {
@@ -146,6 +163,33 @@ const ProductList = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6">
+      {/* Search & Filter */}
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="ค้นหาด้วยรหัสสินค้า หรือชื่อสินค้า"
+          value={searchText}
+          onChange={e => setSearchText(e.target.value)}
+          className="border px-4 py-2 rounded w-full md:w-1/3"
+        />
+        <select
+          value={mainCategory}
+          onChange={e => setMainCategory(e.target.value)}
+          className="border px-4 py-2 rounded w-full md:w-1/4"
+        >
+          <option value="">ทุกประเภทสินค้าหลัก</option>
+          {categoryOptions.map(opt => (
+            <option key={opt} value={opt}>{opt}</option>
+          ))}
+        </select>
+        <input
+          type="text"
+          placeholder="ประเภทสินค้าย่อย"
+          value={subCategory}
+          onChange={e => setSubCategory(e.target.value)}
+          className="border px-4 py-2 rounded w-full md:w-1/4"
+        />
+      </div>
       <div className="flex justify-end mb-6">
         <button
           onClick={() => setShowAddProductModal(true)}
@@ -166,12 +210,10 @@ const ProductList = () => {
         </div>
       )}
       <ProductGrid
-        products={products}
+        products={filteredProducts}
         viewMode={viewMode}
         onOpenModal={setModalProductId}
         onAddToSelection={handleAddToSelection}
-        onEdit={setEditingId}
-        editingId={editingId}
       />
       {modalProductId && viewMode === "modal" && (
         <ProductDetail
