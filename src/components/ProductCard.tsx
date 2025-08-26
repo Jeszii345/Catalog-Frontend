@@ -50,6 +50,7 @@ const ProductCard = ({
         className="rounded-t-xl"
       />
       <h2 className="mt-4 font-bold">{product.title}</h2>
+      <h2 className="mt-4 font-bold">{product.titleEn}</h2>
       <p className="mt-2 text-gray-700">{shortDesc}</p>
     </div>
   );

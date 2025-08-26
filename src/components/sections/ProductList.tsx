@@ -1,21 +1,17 @@
 import { useState } from "react";
-import { sampleProducts, Product } from "../../Data/products";
+import { FiSearch, FiPlus } from "react-icons/fi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { sampleProducts, Product } from "../../Data/products";
+import ProductGrid from "./ProductGrid";
 import ProductDetail from "./ProductDetail";
 import ProductSelectionModal from "./ProductSelectionModal";
 import AddProductModal from "./AddProductModal";
 import ViewModeToggle from "./ViewModeToggle";
-import ProductGrid from "./ProductGrid";
-import ProductEdit from "./ProductEdit"; // หรือ ProductEditModal
+import ProductEdit from "./ProductEdit";
 
 // --- ตัวเลือกประเภทสินค้าหลัก ---
-const categoryOptions = [
-  "อาหารเด็ก",
-  "เครื่องสำอาง",
-  "ผลิตภัณฑ์ทำความสะอาด",
-  "อื่น ๆ",
-];
+const categoryOptions = ["อาหารเด็ก", "เครื่องสำอาง", "ผลิตภัณฑ์ทำความสะอาด", "อื่น ๆ"];
 
 const ProductList = () => {
   const [viewMode, setViewMode] = useState<"webpage" | "modal">("webpage");
@@ -25,6 +21,9 @@ const ProductList = () => {
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [products, setProducts] = useState<Product[]>(sampleProducts);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [searchText, setSearchText] = useState("");
+  const [mainCategory, setMainCategory] = useState("");
+  const [subCategory, setSubCategory] = useState("");
 
   const [newProduct, setNewProduct] = useState<any>({
     id: "",
@@ -44,24 +43,21 @@ const ProductList = () => {
     unitPrice: "",
   });
 
-  const [searchText, setSearchText] = useState("");
-  const [mainCategory, setMainCategory] = useState("");
-  const [subCategory, setSubCategory] = useState("");
-
   // ฟิลเตอร์สินค้า
   const filteredProducts = products.filter((product) => {
     const search = searchText.trim().toLowerCase();
-    const matchSearch =
-      (product.productCode?.toString().toLowerCase().includes(search) ?? false) ||
-      product.title.toLowerCase().includes(search);
-
-    const matchMain = mainCategory ? product.categoryMain === mainCategory : true;
-    const matchSub = subCategory ? product.subCategory === subCategory : true;
-
-    return matchSearch && matchMain && matchSub;
+    return (
+      product.productCode?.toLowerCase().includes(search) ||
+      product.title?.toLowerCase().includes(search) ||
+      product.titleEn?.toLowerCase().includes(search) ||
+      product.categoryMain?.toLowerCase().includes(search) ||
+      product.subCategory?.toLowerCase().includes(search) ||
+      product.categoryNameTh?.toLowerCase().includes(search) ||
+      product.categoryNameEn?.toLowerCase().includes(search)
+    );
   });
 
-  // เพิ่มสินค้าลงใน Selection
+  // ---------------- Event Handlers ----------------
   const handleAddToSelection = (product: Product) => {
     setSelectedProducts((prev) => {
       if (prev.find((p) => p.id === product.id)) return prev;
@@ -69,12 +65,10 @@ const ProductList = () => {
     });
   };
 
-  // ลบสินค้าจาก Selection
   const handleRemoveFromSelection = (id: number) => {
     setSelectedProducts((prev) => prev.filter((p) => p.id !== id));
   };
 
-  // พิมพ์ PDF
   const handlePrintPDF = () => {
     if (selectedProducts.length === 0) return;
     const doc = new jsPDF();
@@ -85,7 +79,6 @@ const ProductList = () => {
     doc.save("selected-products.pdf");
   };
 
-  // Submit ฟอร์มเพิ่มสินค้า
   const handleSubmitNewProduct = (e: React.FormEvent) => {
     e.preventDefault();
     const requiredFields = [
@@ -102,6 +95,7 @@ const ProductList = () => {
     const product: Product = {
       id: Number(newProduct.id),
       title: newProduct.title,
+      titleEn: newProduct.titleEn,
       details: newProduct.detailsTh,
       image: newProduct.productImage,
     };
@@ -109,7 +103,6 @@ const ProductList = () => {
     handleCancelAddProduct();
   };
 
-  // ยกเลิกฟอร์มเพิ่มสินค้า
   const handleCancelAddProduct = () => {
     setShowAddProductModal(false);
     setNewProduct({
@@ -121,7 +114,6 @@ const ProductList = () => {
     });
   };
 
-  // ฟังก์ชัน render สำหรับ Upload + Preview รูปภาพ
   const renderImageUpload = (label: string, key: string) => (
     <div className="col-span-2">
       <label className="block text-sm font-medium mb-1">{label} *</label>
@@ -136,9 +128,9 @@ const ProductList = () => {
         <button
           type="button"
           onClick={() => document.getElementById(key)?.click()}
-          className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
+          className="bg-gray-100 px-4 py-2 rounded-lg hover:bg-gray-200 text-sm font-medium shadow-sm"
         >
-          Choose File
+          เลือกไฟล์
         </button>
         <input
           id={key}
@@ -163,58 +155,65 @@ const ProductList = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6">
-      {/* Search & Filter */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="ค้นหาด้วยรหัสสินค้า หรือชื่อสินค้า"
-          value={searchText}
-          onChange={e => setSearchText(e.target.value)}
-          className="border px-4 py-2 rounded w-full md:w-1/3"
-        />
-        <select
-          value={mainCategory}
-          onChange={e => setMainCategory(e.target.value)}
-          className="border px-4 py-2 rounded w-full md:w-1/4"
-        >
-          <option value="">ทุกประเภทสินค้าหลัก</option>
-          {categoryOptions.map(opt => (
-            <option key={opt} value={opt}>{opt}</option>
-          ))}
-        </select>
-        <input
-          type="text"
-          placeholder="ประเภทสินค้าย่อย"
-          value={subCategory}
-          onChange={e => setSubCategory(e.target.value)}
-          className="border px-4 py-2 rounded w-full md:w-1/4"
-        />
-      </div>
-      <div className="flex justify-end mb-6">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+        <h1 className="text-2xl font-bold text-gray-800">จัดการสินค้า</h1>
         <button
           onClick={() => setShowAddProductModal(true)}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold"
+          className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl shadow hover:bg-blue-700 font-semibold transition"
         >
-          ➕ เพิ่มสินค้า
+          <FiPlus className="text-lg" /> เพิ่มสินค้าใหม่
         </button>
       </div>
-      <ViewModeToggle viewMode={viewMode} setViewMode={setViewMode} />
+
+      {/* Search & Filter */}
+      <div className="flex flex-col md:flex-row gap-4 mb-6 items-center">
+        {/* Search Box with Icon */}
+        <div className="relative w-full max-w-md">
+          <input
+            type="text"
+            placeholder="ค้นหาสินค้า (รหัส, ชื่อ, ประเภท ฯลฯ)"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-full pl-10 pr-3 h-10 border rounded-lg shadow-sm text-sm
+                       focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <FiSearch className="text-gray-400 text-lg" />
+          </div>
+        </div>
+
+        {/* View Mode Toggle */}
+        <ViewModeToggle viewMode={viewMode} setViewMode={setViewMode} />
+      </div>
+
+      {/* Selection Button */}
       {selectedProducts.length > 0 && (
         <div className="mb-6 text-center">
           <button
             onClick={() => setShowSelectionModal(true)}
-            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-semibold"
+            className="bg-green-600 text-white px-6 py-3 rounded-xl shadow hover:bg-green-700 font-semibold transition"
           >
             รายการที่เลือก ({selectedProducts.length})
           </button>
         </div>
       )}
-      <ProductGrid
-        products={filteredProducts}
-        viewMode={viewMode}
-        onOpenModal={setModalProductId}
-        onAddToSelection={handleAddToSelection}
-      />
+
+      {/* Product Grid */}
+      {filteredProducts.length > 0 ? (
+        <ProductGrid
+          products={filteredProducts}
+          viewMode={viewMode}
+          onOpenModal={setModalProductId}
+          onAddToSelection={handleAddToSelection}
+        />
+      ) : (
+        <div className="text-center py-16 text-gray-500 border rounded-xl shadow-sm">
+          ไม่พบสินค้าที่คุณค้นหา
+        </div>
+      )}
+
+      {/* Modals */}
       {modalProductId && viewMode === "modal" && (
         <ProductDetail
           mode="modal"
@@ -223,10 +222,7 @@ const ProductList = () => {
         />
       )}
       {editingId && (
-        <ProductEdit
-          id={editingId.toString()}
-          onClose={() => setEditingId(null)}
-        />
+        <ProductEdit id={editingId.toString()} onClose={() => setEditingId(null)} />
       )}
       {showSelectionModal && (
         <ProductSelectionModal
