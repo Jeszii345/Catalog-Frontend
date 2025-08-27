@@ -43,6 +43,7 @@ const ProductCard = ({
   // ส่วนเนื้อหาหลัก (กดเพื่อเข้าไปดูรายละเอียด)
   const Content = (
     <div className="p-4">
+      <h2 className="mt-4 font-bold">{product.productCode}</h2>
       <img
         src={product.image}
         alt={product.title}
@@ -73,7 +74,7 @@ const ProductCard = ({
             }}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
           >
-            Add to Selection
+            เพิ่มไปยังรายการที่เลือก
           </button>
         </div>
       )}

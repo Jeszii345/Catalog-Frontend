@@ -6,7 +6,7 @@ const Home = () => {
   return (
     <div className="animate-fade-in">
       {/* <Hero /> */}
-     <div className="min-h-screen bg-gray-100">
+     <div className="min-h-screen ">
       <h1 className="text-3xl font-bold text-center py-10">รายการสินค้า</h1>
       <ProductList />
     </div>

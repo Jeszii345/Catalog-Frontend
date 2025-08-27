@@ -6,6 +6,7 @@ export type Product = {
   details: string;
   image: string;
   titleEn: string;
+  productCode: string;
 };
 
 export const sampleProducts: Product[] = [
