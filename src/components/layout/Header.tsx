@@ -14,7 +14,7 @@ const Header = () => {
   const isActive = (path: string) => location.pathname === path
 
   return (
-    <header className="">
+    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm">
       <div className="container-custom">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}

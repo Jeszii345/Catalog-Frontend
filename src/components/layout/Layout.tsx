@@ -15,13 +15,15 @@ const Layout = ({ children }: LayoutProps) => {
       <Header />
 
       {/* Body with Sidebar */}
-      <div className="flex flex-1">
+      <div className="flex flex-1 relative">
         <SidebarProvider>
           {/* Sidebar */}
-          <AppSidebar />
+          <div className="relative z-40">
+            <AppSidebar />
+          </div>
 
           {/* Main Content */}
-          <main className="flex-1 p-4">
+          <main className="flex-1 p-4 overflow-auto">
             <SidebarTrigger />
             {children}
           </main>
