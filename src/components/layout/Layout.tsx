@@ -11,8 +11,7 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
-      {/* Header */}
-      <Header />
+
 
       {/* Body with Sidebar */}
       <div className="flex flex-1 relative">
@@ -24,6 +23,8 @@ const Layout = ({ children }: LayoutProps) => {
 
           {/* Main Content */}
           <main className="flex-1 p-4 overflow-auto">
+             {/* Header */}
+            <Header />
             <SidebarTrigger />
             {children}
           </main>
