@@ -1,4 +1,4 @@
-import { Calendar, Home, Search, Settings } from "lucide-react"
+import { Calendar, Home, Search, Settings  } from "lucide-react"
 import { FiMail } from 'react-icons/fi'
 import {
   Sidebar,
@@ -14,30 +14,26 @@ import {
 // Menu items.
 const items = [
   {
-    title: "Home",
+    title: "หน้าแรก",
     url: "/",
     icon: Home,
   },
   {
-    title: "Contact",
+    title: "ติดต่อ",
     url: "/contact",
     icon: FiMail,
   },
   {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
+    title: "Admin",
+    url: "/admin/employees",
     icon: Settings,
   },
+  {
+    title: "เปลี่ยนรหัสผ่าน",
+    url: "/profile/change-password",
+    icon: Settings,
+  },
+
 ]
 
 export function AppSidebar() {
@@ -45,7 +41,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>Catalog Product</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

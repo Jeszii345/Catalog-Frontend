@@ -78,7 +78,7 @@ const requiredFields = [
 const categoryOptions = [
   "อาหารเด็ก",
   "เครื่องสำอาง",
-  "ผลิตภัณฑ์ทำความสะอาด",
+  "เด็กและทารก",
   "อื่น ๆ",
 ];
 
@@ -102,7 +102,7 @@ const ProductDetail = ({
   if (!product)
     return (
       <div className="p-6 text-center text-red-500 font-semibold">
-ไม่พบสินค้า      
+ไม่พบสินค้า
 </div>
     );
 

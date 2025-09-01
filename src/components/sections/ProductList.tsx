@@ -10,8 +10,9 @@ import AddProductModal from "./AddProductModal";
 import ViewModeToggle from "./ViewModeToggle";
 import ProductEdit from "./ProductEdit";
 
-// --- ตัวเลือกประเภทสินค้าหลัก ---
-const categoryOptions = ["อาหารเด็ก", "เครื่องสำอาง", "ผลิตภัณฑ์ทำความสะอาด", "อื่น ๆ"];
+// --- ตัวเลือกประเภทสินค้าหลักและย่อย ---
+const categoryOptions = ["อาหารเด็ก", "เด็กและทารก", "เครื่องสำอาง", "อื่น ๆ"];
+const subCategoryOptions = ["ของใช้ส่วนตัว", "เครื่องใช้ไฟฟ้า", "อุปกรณ์สำนักงาน", "ของใช้ในบ้าน"];
 
 const ProductList = () => {
   const [viewMode, setViewMode] = useState<"webpage" | "modal">("webpage");
@@ -43,18 +44,22 @@ const ProductList = () => {
     unitPrice: "",
   });
 
-  // ฟิลเตอร์สินค้า
+  // กรองสินค้า
   const filteredProducts = products.filter((product) => {
     const search = searchText.trim().toLowerCase();
-    return (
+    const matchSearch =
       product.productCode?.toLowerCase().includes(search) ||
       product.title?.toLowerCase().includes(search) ||
       product.titleEn?.toLowerCase().includes(search) ||
       product.categoryMain?.toLowerCase().includes(search) ||
       product.subCategory?.toLowerCase().includes(search) ||
       product.categoryNameTh?.toLowerCase().includes(search) ||
-      product.categoryNameEn?.toLowerCase().includes(search)
-    );
+      product.categoryNameEn?.toLowerCase().includes(search);
+
+    const matchMainCategory = !mainCategory || product.categoryMain === mainCategory;
+    const matchSubCategory = !subCategory || product.subCategory === subCategory;
+
+    return matchSearch && matchMainCategory && matchSubCategory;
   });
 
   // ---------------- Event Handlers ----------------
@@ -168,7 +173,6 @@ const ProductList = () => {
 
       {/* Search & Filter */}
       <div className="flex flex-col md:flex-row gap-4 mb-6 items-center">
-        {/* Search Box with Icon */}
         <div className="relative w-full max-w-md">
           <input
             type="text"
@@ -183,21 +187,34 @@ const ProductList = () => {
           </div>
         </div>
 
-        {/* View Mode Toggle */}
+        {/* Dropdown filter main */}
+        <select
+          value={mainCategory}
+          onChange={(e) => setMainCategory(e.target.value)}
+          className="h-10 border rounded-lg px-3 shadow-sm text-sm
+                     focus:ring-2 focus:ring-blue-400 focus:outline-none"
+        >
+          <option value="">-- ทุกประเภทหลัก --</option>
+          {categoryOptions.map((opt) => (
+            <option key={opt} value={opt}>{opt}</option>
+          ))}
+        </select>
+
+        {/* Dropdown filter sub */}
+        <select
+          value={subCategory}
+          onChange={(e) => setSubCategory(e.target.value)}
+          className="h-10 border rounded-lg px-3 shadow-sm text-sm
+                     focus:ring-2 focus:ring-blue-400 focus:outline-none"
+        >
+          <option value="">-- ทุกประเภทย่อย --</option>
+          {subCategoryOptions.map((opt) => (
+            <option key={opt} value={opt}>{opt}</option>
+          ))}
+        </select>
+
         <ViewModeToggle viewMode={viewMode} setViewMode={setViewMode} />
       </div>
-
-      {/* Selection Button */}
-      {selectedProducts.length > 0 && (
-        <div className="mb-6 text-center">
-          <button
-            onClick={() => setShowSelectionModal(true)}
-            className="bg-green-600 text-white px-6 py-3 rounded-xl shadow hover:bg-green-700 font-semibold transition"
-          >
-            รายการที่เลือก ({selectedProducts.length})
-          </button>
-        </div>
-      )}
 
       {/* Product Grid */}
       {filteredProducts.length > 0 ? (

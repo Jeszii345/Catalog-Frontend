@@ -8,6 +8,8 @@ import Contact from './pages/Contact'
 import ProductList from './components/sections/ProductList'
 import ProductDetail from './components/sections/ProductDetail'
 import ManagerDatatable from './components/Manager Datatable/ManagerDatatable'
+import EmployeeList from './components/employee/EmployeeList'
+import ChangePasswordPage from './components/UserProfile/change-password'
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="*" element={<NotFound />} />
               <Route path="/" element={<ProductList />} />
+              <Route path="/admin/employees" element={<EmployeeList />} />
+              <Route path="/profile/change-password" element={<ChangePasswordPage />} />
               <Route path="/products/:id" element={<ProductDetail mode="webpage" />} />
             </Routes>
           </Layout>

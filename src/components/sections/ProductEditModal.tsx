@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Product } from "../Data/products";
+import { Product } from "../../Data/products";
 
 type ProductEditModalProps = {
   product: Product | null;
