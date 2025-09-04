@@ -82,6 +82,15 @@ const categoryOptions = [
   "อื่น ๆ",
 ];
 
+// Subcategory options (สามารถปรับให้ dynamic ตาม categoryMain)
+const subCategoryOptions = [
+  "ครีมบำรุงผิว",
+  "อาหารเสริม",
+  "ของใช้เด็ก",
+  "ของเล่น",
+  "อื่น ๆ",
+];
+
 const ProductDetail = ({
   mode = "webpage",
   id,
@@ -102,8 +111,8 @@ const ProductDetail = ({
   if (!product)
     return (
       <div className="p-6 text-center text-red-500 font-semibold">
-ไม่พบสินค้า
-</div>
+        ไม่พบสินค้า
+      </div>
     );
 
   const handleChange = (field: string, value: string | File) => {
@@ -152,8 +161,21 @@ const ProductDetail = ({
             onChange={(e) => handleChange(field as string, e.target.value)}
             className="mt-1 border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
-            <option value="">-- Select Category --</option>
+            <option value="">-- เลือกประเภทสินค้า --</option>
             {categoryOptions.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+        ) : field === "subCategory" ? (
+          <select
+            value={formData[field as string] || ""}
+            onChange={(e) => handleChange(field as string, e.target.value)}
+            className="mt-1 border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <option value="">-- เลือกประเภทสินค้าย่อย --</option>
+            {subCategoryOptions.map((opt) => (
               <option key={opt} value={opt}>
                 {opt}
               </option>
@@ -164,7 +186,9 @@ const ProductDetail = ({
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => e.target.files && handleChange(field as string, e.target.files[0])}
+              onChange={(e) =>
+                e.target.files && handleChange(field as string, e.target.files[0])
+              }
               className="mt-1"
             />
             {formData[field as string] && (

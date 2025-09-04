@@ -7,6 +7,7 @@ type Props = {
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
   categoryOptions: string[];
+  subCategoryOptions: string[];
   renderImageUpload: (label: string, key: string) => React.ReactNode;
 };
 
@@ -33,6 +34,7 @@ const AddProductModal = ({
   onSubmit,
   onCancel,
   categoryOptions,
+  subCategoryOptions,
   renderImageUpload,
 }: Props) => {
   if (!show) return null;

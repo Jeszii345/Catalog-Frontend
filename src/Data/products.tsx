@@ -4,7 +4,7 @@ export type Product = {
   title: string;
   description: string;
   details: string;
-  image: string;
+  productImage: string;
   titleEn: string;
   productCode: string;
 };
@@ -29,7 +29,6 @@ export const sampleProducts: Product[] = [
     unitPrice: 25.0,                      // สัดส่วนราคาต่อชิ้น
     description: "Short description of product 1.",
     details: "This is a much longer detailed description of product 1, with more specs and info.",
-    image: "data:image/jpeg;base64,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",         // สำหรับ preview หรือการ์ด
   },
   {
     id: 2,
@@ -50,12 +49,11 @@ export const sampleProducts: Product[] = [
     unitPrice: 120.0,
     description: "Short description of product 2.",
     details: "This is a much longer detailed description of product 2, with more specs and info.",
-    image: "https://f.btwcdn.com/store-47834/product/6053efe8-8ed8-f033-0e46-6620b94c3a81.jpg",
   },
   {
     id: 3,
     productCode: "P003",
-    categoryMain: "เด็กและทารก",
+    categoryMain: "อาหารเด็ก",
     title: "ขวดนมเด็ก",
     titleEn: "Baby Feeding Bottle",
     packTh: "1 ขวด",
@@ -71,6 +69,26 @@ export const sampleProducts: Product[] = [
     unitPrice: 150.0,
     description: "Short description of product 3.",
     details: "This is a much longer detailed description of product 3, with more specs and info.",
-    image: "https://inwfile.com/s-cj/jc2cpu.jpg",
   },
+   {
+    id: 4,
+    productCode: "P003",
+    categoryMain: "เครื่องสำอาง",
+    title: "ขวดนมเด็ก",
+    titleEn: "Baby Feeding Bottle",
+    packTh: "1 ขวด",
+    packEn: "1 bottle",
+    categoryImage: "https://www.jarsking.com/wp-content/uploads/2023/04/1.Cosmetic-bottle-set-JK001-2.jpg",
+    detailsTh: "ขวดนม BPA Free ปลอดภัยต่อเด็กเล็ก",
+    detailsEn: "BPA-free feeding bottle, safe for infants",
+    subCategory: "ของใช้ส่วนตัว",
+    categoryNameTh: "อุปกรณ์ให้นม",
+    categoryNameEn: "Feeding Equipment",
+    productImage: "https://www.jarsking.com/wp-content/uploads/2024/12/skincare-frosting-set.webp",
+    detailImage: "https://www.jarsking.com/wp-content/uploads/2023/04/1.Cosmetic-bottle-set-JK001-2.jpg",
+    unitPrice: 150.0,
+    description: "Short description of product 3.",
+    details: "This is a much longer detailed description of product 3, with more specs and info.",
+  },
+
 ];

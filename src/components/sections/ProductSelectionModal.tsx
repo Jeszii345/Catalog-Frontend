@@ -26,7 +26,7 @@ const ProductSelectionModal = ({
       <div className="space-y-4 max-h-96 overflow-y-auto">
         {selectedProducts.map((p) => (
           <div key={p.id} className="flex items-center gap-4 border-b pb-2">
-            <img src={p.image} alt={p.title} className="w-16 h-16 object-contain rounded" />
+            <img src={p.productImage} alt={p.title} className="w-16 h-16 object-contain rounded" />
             <div className="flex-1">
               <h3 className="font-semibold">{p.title}</h3>
               <p className="text-gray-600 text-sm">{p.details}</p>

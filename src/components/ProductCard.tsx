@@ -45,7 +45,7 @@ const ProductCard = ({
     <div className="p-4">
       <h2 className="mt-4 font-bold">{product.productCode}</h2>
       <img
-        src={product.image}
+        src={product.productImage}
         alt={product.title}
         style={imageStyle}
         className="rounded-t-xl"
