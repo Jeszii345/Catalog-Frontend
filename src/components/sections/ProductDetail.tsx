@@ -95,7 +95,6 @@ const ProductDetail = ({
   mode = "webpage",
   id,
   onClose,
-  imgHeight = 300,
 }: ProductDetailProps) => {
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();

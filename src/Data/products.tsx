@@ -7,6 +7,17 @@ export type Product = {
   productImage: string;
   titleEn: string;
   productCode: string;
+  categoryMain:string;
+  subCategory:string;
+  categoryNameTh:string;
+  categoryNameEn:string;
+  detailsTh:string;
+  detailsEn:string;
+  unitPrice:number;
+  packTh:string;
+  packEn:string;
+  categoryImage:string;
+  detailImage:string;
 };
 
 export const sampleProducts: Product[] = [

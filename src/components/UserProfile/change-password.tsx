@@ -1,4 +1,3 @@
-import React from "react";
 import ChangePasswordForm from "@/components/UserProfile/ChangePasswordForm";
 
 const ChangePasswordPage = () => {

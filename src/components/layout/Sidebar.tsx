@@ -1,4 +1,4 @@
-import { Calendar, Home, Search, Settings  } from "lucide-react"
+import {  Home,  Settings  } from "lucide-react"
 import { FiMail } from 'react-icons/fi'
 import {
   Sidebar,

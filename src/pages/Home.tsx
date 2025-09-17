@@ -1,6 +1,5 @@
-import Hero from '@components/sections/Hero'
+
 import ProductList from '@/components/sections/ProductList'
-import CTA from '@components/sections/CTA'
 
 const Home = () => {
   return (

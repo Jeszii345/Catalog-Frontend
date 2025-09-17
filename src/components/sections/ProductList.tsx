@@ -87,10 +87,10 @@ const ProductList = () => {
   const handleSubmitNewProduct = (e: React.FormEvent) => {
     e.preventDefault();
     const requiredFields = [
-      "id", "categoryMain", "title", "titleEn", "packTh", "packEn",
-      "categoryImage", "detailsTh", "detailsEn", "categoryNameTh",
-      "categoryNameEn", "productImage", "detailImage",
-    ];
+    "id", "categoryMain", "title", "titleEn", "packTh", "packEn",
+    "categoryImage", "detailsTh", "detailsEn", "categoryNameTh",
+    "categoryNameEn", "productImage", "detailImage",
+  ];
     for (const f of requiredFields) {
       if (!newProduct[f]) {
         alert("กรุณากรอกข้อมูลที่ต้องระบุให้ครบถ้วน");
@@ -98,12 +98,25 @@ const ProductList = () => {
       }
     }
     const product: Product = {
-      id: Number(newProduct.id),
-      title: newProduct.title,
-      titleEn: newProduct.titleEn,
-      details: newProduct.detailsTh,
-      image: newProduct.productImage,
-    };
+    id: Number(newProduct.id),
+    title: newProduct.title,
+    description: newProduct.detailsEn,
+    details: newProduct.detailsTh,
+    productImage: newProduct.productImage,
+    titleEn: newProduct.titleEn,
+    productCode: newProduct.productCode || "",
+    categoryMain: newProduct.categoryMain,
+    subCategory: newProduct.subCategory,
+    categoryNameTh: newProduct.categoryNameTh,
+    categoryNameEn: newProduct.categoryNameEn,
+    detailsTh: newProduct.detailsTh,
+    detailsEn: newProduct.detailsEn,
+    unitPrice: Number(newProduct.unitPrice) || 0,
+    packTh: newProduct.packTh,
+    packEn: newProduct.packEn,
+    categoryImage: newProduct.categoryImage,
+    detailImage: newProduct.detailImage,
+  };
     setProducts((prev) => [...prev, product]);
     handleCancelAddProduct();
   };
@@ -256,6 +269,7 @@ const ProductList = () => {
         onSubmit={handleSubmitNewProduct}
         onCancel={handleCancelAddProduct}
         categoryOptions={categoryOptions}
+        subCategoryOptions={subCategoryOptions}   // 👈 เพิ่มตัวนี้
         renderImageUpload={renderImageUpload}
       />
     </div>

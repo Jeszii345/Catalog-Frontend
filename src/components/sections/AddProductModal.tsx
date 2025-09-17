@@ -11,21 +11,6 @@ type Props = {
   renderImageUpload: (label: string, key: string) => React.ReactNode;
 };
 
-const requiredFields = [
-  "id",
-  "categoryMain",
-  "title",
-  "titleEn",
-  "packTh",
-  "packEn",
-  "categoryImage",
-  "detailsTh",
-  "detailsEn",
-  "categoryNameTh",
-  "categoryNameEn",
-  "productImage",
-  "detailImage",
-];
 
 const AddProductModal = ({
   show,
@@ -34,7 +19,6 @@ const AddProductModal = ({
   onSubmit,
   onCancel,
   categoryOptions,
-  subCategoryOptions,
   renderImageUpload,
 }: Props) => {
   if (!show) return null;

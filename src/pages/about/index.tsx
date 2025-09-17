@@ -1,4 +1,3 @@
-import TeamSection from './components/TeamSection'
 import MissionSection from './components/MissionSection'
 import TechStack from './components/TechStack'
 import StatsSection from './components/StatsSection'
@@ -24,7 +23,7 @@ const AboutPage = () => {
       <MissionSection />
       <TechStack />
       <StatsSection />
-      <TeamSection />
+
     </div>
   )
 }

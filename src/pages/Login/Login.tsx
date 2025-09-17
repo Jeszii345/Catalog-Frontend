@@ -4,12 +4,8 @@ import { useNavigate } from 'react-router-dom';
 const Login = () => {
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // ดึงค่าจาก input ถ้าจำเป็น (ตัวอย่างแบบเร็ว)
-    const email = e.target.email.value;
-    const password = e.target.password.value;
 
     // TODO: ทำการตรวจสอบ login จริง ๆ ที่นี่ (เช่น เรียก API)
 
